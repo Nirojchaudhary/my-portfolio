@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>404 — Page Not Found</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="alternate icon" href="/favicon.svg">
+  <link rel="stylesheet" href="/css/base.css">
+  <style>
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      text-align: center;
+      padding: 24px;
+      overflow: hidden;
+      position: relative;
+    }
+    body::before {
+      content: '';
+      position: fixed;
+      top: -200px; left: -200px;
+      width: 600px; height: 600px;
+      border-radius: 50%;
+      background: var(--accent);
+      filter: blur(120px);
+      opacity: 0.25;
+      pointer-events: none;
+    }
+    body::after {
+      content: '';
+      position: fixed;
+      bottom: -200px; right: -200px;
+      width: 500px; height: 500px;
+      border-radius: 50%;
+      background: #a855f7;
+      filter: blur(120px);
+      opacity: 0.2;
+      pointer-events: none;
+    }
+    .wrap {
+      max-width: 560px;
+      position: relative;
+      z-index: 1;
+      animation: fadeInUp 0.6s ease-out;
+    }
+    .code {
+      font-size: clamp(5rem, 18vw, 10rem);
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--accent), #a855f7);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      line-height: 1;
+      margin-bottom: 8px;
+      letter-spacing: -0.05em;
+    }
+    h1 {
+      font-size: clamp(1.4rem, 3vw, 1.8rem);
+      font-weight: 700;
+      margin-bottom: 14px;
+      color: var(--text);
+      letter-spacing: -0.02em;
+    }
+    p {
+      color: var(--muted);
+      margin-bottom: 32px;
+      font-size: 1rem;
+      line-height: 1.7;
+    }
+    .actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="code">404</div>
+    <h1>Page not found</h1>
+    <p>The page you're looking for doesn't exist or has been moved.</p>
+    <div class="actions">
+      <a href="/" class="btn btn-primary">← Back to Home</a>
+      <a href="/#section-contact" class="btn btn-secondary">Contact Me</a>
+    </div>
+  </div>
+</body>
+</html>

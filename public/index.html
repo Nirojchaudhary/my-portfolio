@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Niroj Chaudhary</title>
+  <meta name="description" content="Personal portfolio">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="alternate icon" href="/favicon.svg">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/public.css">
+  <link rel="alternate" type="application/rss+xml" title="Projects RSS" href="/rss.xml">
+</head>
+<body>
+  <canvas id="particle-canvas" aria-hidden="true"></canvas>
+  <div class="cursor-dot" id="cursor-dot" aria-hidden="true"></div>
+  <div class="cursor-ring" id="cursor-ring" aria-hidden="true"></div>
+  <div class="cursor-trail" id="cursor-trail" aria-hidden="true"></div>
+
+  <a href="#main" class="skip-link">Skip to content</a>
+  <div id="scroll-progress"></div>
+
+  <div class="bg-orbs" aria-hidden="true">
+    <div class="bg-orb bg-orb-1"></div>
+    <div class="bg-orb bg-orb-2"></div>
+    <div class="bg-orb bg-orb-3"></div>
+  </div>
+
+  <nav>
+    <div class="nav-inner">
+      <a href="#home" class="logo"><span id="nav-name">Portfolio</span></a>
+      <button class="nav-toggle" onclick="document.getElementById('nav-links').classList.toggle('open')" aria-label="Toggle menu">☰</button>
+      <ul class="nav-links" id="nav-links">
+        <li id="nav-link-home"><a href="#home" onclick="closeNav()">Home</a></li>
+        <li id="nav-link-about"><a href="#section-about" onclick="closeNav()">About</a></li>
+        <li id="nav-link-skills"><a href="#section-skills" onclick="closeNav()">Skills</a></li>
+        <li id="nav-link-experience"><a href="#section-experience" onclick="closeNav()">Experience</a></li>
+        <li id="nav-link-education"><a href="#section-education" onclick="closeNav()">Education</a></li>
+        <li id="nav-link-services"><a href="#section-services" onclick="closeNav()">Services</a></li>
+        <li id="nav-link-projects"><a href="#section-projects" onclick="closeNav()">Projects</a></li>
+        <li id="nav-link-blog"><a href="#section-blog" onclick="closeNav()">Blog</a></li>
+        <li id="nav-link-testimonials"><a href="#section-testimonials" onclick="closeNav()">Testimonials</a></li>
+        <li id="nav-link-contact"><a href="#section-contact" onclick="closeNav()">Contact</a></li>
+        <li id="nav-resume" style="display:none;">
+          <a href="#" id="nav-resume-link" class="btn btn-secondary btn-small" target="_blank" rel="noopener" onclick="closeNav()">📄 Resume</a>
+        </li>
+        <li>
+          <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">☀</button>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <main id="main">
+
+    <!-- HERO CAROUSEL -->
+    <header class="hero-carousel" id="home">
+      <div class="carousel-track" id="carousel-track">
+        <div class="carousel-slide gradient-1"></div>
+      </div>
+
+      <button class="carousel-arrow prev" onclick="prevSlide()" aria-label="Previous">‹</button>
+      <button class="carousel-arrow next" onclick="nextSlide()" aria-label="Next">›</button>
+
+      <div class="carousel-dots" id="carousel-dots"></div>
+
+      <div class="hero-socials-overlay" id="socials"></div>
+
+      <div class="hero-avatar-wrap">
+        <div class="availability-badge" id="availability-badge" style="display:none;">
+          <span class="availability-dot"></span>
+          <span id="availability-text">Available for work</span>
+        </div>
+        <img id="avatar" class="hero-avatar" alt="" />
+        <div class="hero-avatar-info">
+          <h1 id="name">Loading...</h1>
+          <p class="headline" id="headline"></p>
+          <p class="bio" id="bio"></p>
+        </div>
+      </div>
+    </header>
+
+    <section id="section-about">
+      <div class="container">
+        <div class="section-title-wrap">
+          <h2 class="section-title" id="about-heading">About Me</h2>
+          <p class="section-subtitle" id="about-subtitle">A quick introduction</p>
+        </div>
+        <div class="about-grid">
+          <div class="about-text" id="about-body"></div>
+          <div class="about-stats" id="about-stats"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="section-skills">
+      <div class="container">
+        <div class="section-title-wrap">
+          <h2 class="section-title">Skills</h2>
+          <p class="section-subtitle">Technologies and tools I work with</p>
+        </div>
+        <div class="skills-grid" id="skills-grid"></div>
+      </div>
+    </section>
+
+    <section id="section-experience">
+      <div class="container">
+        <div class="section-title-wrap">
+          <h2 class="section-title">Experience</h2>
+          <p class="section-subtitle">Where I've worked</p>
+        </div>
+        <div class="timeline" id="experience-timeline"></div>
+      </div>
+    </section>
+
+    <section id="section-education">
+      <div class="container">
+        <div class="section-title-wrap">
+          <h2 class="section-title">Education</h2>
+          <p class="section-subtitle">Academic background</p>
+        </div>
+        <div class="timeline" id="education-timeline"></div>
+      </div>
+    </section>
+
+    <section id="section-services">
+      <div class="container">
+        <div class="section-title-wrap">
+          <h2 class="section-title">Services</h2>
+          <p class="section-subtitle">What I can help you with</p>
+        </div>
+        <div class="services-grid" id="services-grid"></div>
+      </div>
+    </section>
+
+    <section id="section-projects">
+      <div class="container">
+        <div class="section-title-wrap">
+          <h2 class="section-title">Projects</h2>
+          <p class="section-subtitle">Things I've built</p>
+        </div>
+        <div class="project-filter" id="project-filter" style="display:none;"></div>
+        <div class="projects" id="projects-list">
+          <div class="loading" style="grid-column: 1/-1;">
+            <div class="spinner"></div>
+            <div>Loading projects...</div>
+          </div>
+        </div>
+      </div>
+    </section>
+        <!-- BLOG -->
+    <section id="section-blog">
+      <div class="container">
+        <div class="section-title-wrap">
+          <h2 class="section-title">Blog</h2>
+          <p class="section-subtitle">Thoughts, tutorials, and updates</p>
+        </div>
+        <div class="posts-grid" id="posts-list">
+          <div class="loading" style="grid-column: 1/-1;">
+            <div class="spinner"></div>
+            <div>Loading posts...</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="section-testimonials">
+      <div class="container">
+        <div class="section-title-wrap">
+          <h2 class="section-title">Testimonials</h2>
+          <p class="section-subtitle">What people say</p>
+        </div>
+
+        <div class="testimonials-carousel" id="testimonials-carousel" style="display:none;">
+          <button class="tcar-arrow tcar-prev" onclick="prevTestimonial()" aria-label="Previous testimonial">‹</button>
+          <div class="tcar-viewport">
+            <div class="tcar-track" id="tcar-track"></div>
+          </div>
+          <button class="tcar-arrow tcar-next" onclick="nextTestimonial()" aria-label="Next testimonial">›</button>
+          <div class="tcar-dots" id="tcar-dots"></div>
+        </div>
+
+        <div class="testimonials-grid" id="testimonials-grid"></div>
+      </div>
+    </section>
+
+    <section id="section-contact">
+      <div class="container">
+        <div class="section-title-wrap" style="text-align:center;">
+          <h2 class="section-title">Get In Touch</h2>
+          <p class="section-subtitle" style="margin: 0 auto 40px;">Have a project in mind? Let's talk.</p>
+        </div>
+        <div class="contact-card">
+          <h3>Let's work together</h3>
+          <p>I'm always open to discussing new projects, opportunities, or just chatting about tech.</p>
+          <div class="contact-actions" id="contact-actions"></div>
+
+          <form class="contact-form" onsubmit="submitContact(event)" novalidate>
+            <h4>Or send me a message</h4>
+            <div class="form-row">
+              <div class="form-field">
+                <input type="text" name="name" placeholder="Your name" required aria-describedby="err-name" />
+                <div class="field-error" id="err-name"></div>
+              </div>
+              <div class="form-field">
+                <input type="email" name="email" placeholder="Your email" required aria-describedby="err-email" />
+                <div class="field-error" id="err-email"></div>
+              </div>
+            </div>
+            <div class="form-field">
+              <input type="text" name="subject" placeholder="Subject (optional)" />
+            </div>
+            <div class="form-field">
+              <textarea name="message" placeholder="Your message..." required aria-describedby="err-message"></textarea>
+              <div class="field-error" id="err-message"></div>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;">Send Message</button>
+            <div class="form-status" id="form-status" role="status" aria-live="polite"></div>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>&copy; <span id="year"></span> <span id="footer-name">Portfolio</span></p>
+      <p style="margin-top:6px;" id="footer-text">Built with Cloudflare Workers</p>
+    </div>
+  </footer>
+
+    <button id="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Back to top">↑</button>
+
+  <!-- Floating Resume Button -->
+  <a id="floating-resume" href="#" target="_blank" rel="noopener" aria-label="Download Resume" style="display:none;">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+      <polyline points="14 2 14 8 20 8"></polyline>
+      <line x1="16" y1="13" x2="8" y2="13"></line>
+      <line x1="16" y1="17" x2="8" y2="17"></line>
+      <polyline points="10 9 9 9 8 9"></polyline>
+    </svg>
+  </a>
+
+  <!-- Project Modal -->
+
+  <!-- Floating Resume Button -->
+    <!-- Project Modal -->
+  <div class="project-modal-overlay" id="project-modal-overlay" onclick="closeProjectModalFromOverlay(event)">
+    <div class="project-modal" id="project-modal" role="dialog" aria-modal="true" aria-labelledby="project-modal-title">
+      <button class="project-modal-close" onclick="closeProjectModal()" aria-label="Close">×</button>
+
+      <div class="project-modal-image" id="project-modal-image"></div>
+
+      <div class="project-modal-body">
+        <h2 class="project-modal-title" id="project-modal-title"></h2>
+        <div class="project-modal-tags" id="project-modal-tags"></div>
+        <div class="project-modal-desc" id="project-modal-desc"></div>
+        <div class="project-modal-links" id="project-modal-links"></div>
+      </div>
+    </div>
+  </div>
+
+    <!-- Post Modal -->
+  <div class="project-modal-overlay" id="post-modal-overlay" onclick="closePostViewFromOverlay(event)">
+    <div class="project-modal" id="post-view-modal" role="dialog" aria-modal="true" aria-labelledby="post-view-title">
+      <button class="project-modal-close" onclick="closePostView()" aria-label="Close">×</button>
+
+      <div class="project-modal-image" id="post-view-image"></div>
+
+      <div class="project-modal-body">
+        <div class="post-view-date" id="post-view-date"></div>
+        <h2 class="project-modal-title" id="post-view-title"></h2>
+        <div class="project-modal-tags" id="post-view-tags"></div>
+        <div class="project-modal-desc" id="post-view-content"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/public.js"></script>
+</body>
+</html>

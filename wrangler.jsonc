@@ -1,0 +1,24 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "my-portfolio",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-09-07",
+  "observability": {
+    "enabled": true
+  },
+  "upload_source_maps": true,
+
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS",
+    "not_found_handling": "404-page",
+    "run_worker_first": true
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "portfolio-db",
+      "database_id": "5f088b39-eaed-4182-abfd-b245e32bd5e5"
+    }
+  ]
+}

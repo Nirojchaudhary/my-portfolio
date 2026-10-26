@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin — Niroj Chaudhary</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="alternate icon" href="/favicon.svg">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+
+  <!-- LOGIN / SETUP -->
+  <div id="login-screen" class="login-wrap" style="display:none;">
+    <div class="login-box">
+      <h1>Admin</h1>
+
+      <div id="login-error" class="message error" style="display:none;margin-bottom:16px;"></div>
+
+      <!-- Login form -->
+      <form id="login-form" onsubmit="login(event)" style="display:none;">
+        <p style="margin-bottom:20px;">Sign in to manage your site.</p>
+        <div class="form-group">
+          <label>Username</label>
+          <input type="text" id="login-username" autocomplete="username" required />
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="login-password" autocomplete="current-password" required />
+        </div>
+        <button type="submit" class="btn btn-primary" style="width:100%;">Sign In</button>
+      </form>
+
+      <!-- First-time setup form -->
+      <form id="setup-form" onsubmit="setupAdmin(event)" style="display:none;">
+        <div class="message" style="background:#1e3a5f;color:#7dd3fc;margin-bottom:16px;padding:12px;border-radius:6px;font-size:0.88rem;">
+          <strong>First-time setup</strong><br>
+          Create your admin account. You'll use these to log in from now on.
+        </div>
+        <div class="form-group">
+          <label>Username (min 3 chars)</label>
+          <input type="text" id="setup-username" required minlength="3" autocomplete="username" />
+        </div>
+        <div class="form-group">
+          <label>Password (min 8 chars)</label>
+          <input type="password" id="setup-password" required minlength="8" autocomplete="new-password" />
+        </div>
+        <div class="form-group">
+          <label>Confirm Password</label>
+          <input type="password" id="setup-password-confirm" required minlength="8" autocomplete="new-password" />
+        </div>
+        <button type="submit" class="btn btn-primary" style="width:100%;">Create Admin Account</button>
+      </form>
+
+      <p style="margin-top:20px;font-size:0.8rem;text-align:center;">
+        <a href="/" style="color:var(--accent);">← Back to site</a>
+      </p>
+    </div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div id="dashboard" style="display:none;">
+    <div class="container">
+      <div class="admin-header">
+        <h1>Portfolio Admin</h1>
+        <div class="admin-header-actions">
+          <a href="/" target="_blank"><button class="btn btn-secondary btn-small">View Site</button></a>
+          <button class="btn btn-secondary btn-small" onclick="logout()">Logout</button>
+        </div>
+      </div>
+
+      <div class="tabs">
+        <button class="tab" data-tab="dashboard" onclick="switchTab('dashboard')">Dashboard</button>
+        <button class="tab" data-tab="profile" onclick="switchTab('profile')">Profile</button>
+        <button class="tab" data-tab="about" onclick="switchTab('about')">About</button>
+        <button class="tab" data-tab="skills" onclick="switchTab('skills')">Skills</button>
+        <button class="tab" data-tab="experience" onclick="switchTab('experience')">Experience</button>
+        <button class="tab" data-tab="education" onclick="switchTab('education')">Education</button>
+        <button class="tab" data-tab="services" onclick="switchTab('services')">Services</button>
+        <button class="tab" data-tab="projects" onclick="switchTab('projects')">Projects</button>
+        <button class="tab" data-tab="testimonials" onclick="switchTab('testimonials')">Testimonials</button>
+        <button class="tab" data-tab="blog" onclick="switchTab('blog')">Blog</button>
+        <button class="tab" data-tab="messages" onclick="switchTab('messages')">Messages <span id="messages-badge" class="badge-unread" style="display:none;"></span></button>
+        <button class="tab" data-tab="settings" onclick="switchTab('settings')">Settings</button>
+      </div>
+
+      <!-- DASHBOARD -->
+      <div id="panel-dashboard" class="panel">
+        <div class="panel-header"><h2>Dashboard</h2></div>
+        <div class="about-stats" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr));">
+          <div class="stat"><div class="stat-number" id="dash-projects">0</div><div class="stat-label">Projects</div></div>
+          <div class="stat"><div class="stat-number" id="dash-skills">0</div><div class="stat-label">Skill Groups</div></div>
+          <div class="stat"><div class="stat-number" id="dash-messages">0</div><div class="stat-label">Messages</div></div>
+          <div class="stat"><div class="stat-number" id="dash-unread">0</div><div class="stat-label">Unread</div></div>
+        </div>
+
+        <div style="margin-top:40px;max-width:480px;">
+          <h3 style="color:var(--accent);margin-bottom:16px;">Change Password</h3>
+          <form onsubmit="changePassword(event)">
+            <div class="form-group">
+              <label>Current Password</label>
+              <input type="password" id="cp-current" required autocomplete="current-password" />
+            </div>
+            <div class="form-group">
+              <label>New Password (min 8 chars)</label>
+              <input type="password" id="cp-new" required minlength="8" autocomplete="new-password" />
+            </div>
+            <button type="submit" class="btn btn-primary btn-small">Update Password</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- PROFILE -->
+      <div id="panel-profile" class="panel">
+        <div class="panel-header"><h2>Profile</h2></div>
+        <form onsubmit="saveProfile(event)" style="max-width:640px;">
+          <div class="form-group"><label>Name</label><input type="text" id="p-name" required /></div>
+          <div class="form-group"><label>Headline</label><input type="text" id="p-headline" placeholder="Full-stack Developer" /></div>
+          <div class="form-group"><label>Bio</label><textarea id="p-bio" placeholder="Short bio shown on the hero section"></textarea></div>
+          <div class="form-group"><label>Avatar URL</label><input type="url" id="p-avatar" placeholder="https://i.imgur.com/..." /></div>
+          <div class="form-group"><label>Social Links (JSON)</label><textarea id="p-social" placeholder='{"github":"https://github.com/you","email":"you@example.com"}'></textarea></div>
+          <div class="form-group">
+            <label>Hero Cover Images (one URL per line)</label>
+            <textarea id="p-covers" rows="4" placeholder="https://i.imgur.com/image1.jpg&#10;https://i.imgur.com/image2.jpg&#10;https://i.imgur.com/image3.jpg"></textarea>
+            <small style="color:#64748b;font-size:0.8rem;display:block;margin-top:6px;">
+              These rotate as the banner at the top of your site. Leave empty to use the default gradient.
+            </small>
+          </div>
+          <button type="submit" class="btn btn-primary">Save Profile</button>
+        </form>
+      </div>
+
+      <!-- ABOUT -->
+      <div id="panel-about" class="panel">
+        <div class="panel-header"><h2>About Section</h2></div>
+        <form onsubmit="saveAbout(event)" style="max-width:720px;">
+          <div class="form-row">
+            <div class="form-group"><label>Heading</label><input type="text" id="a-heading" /></div>
+            <div class="form-group"><label>Subheading</label><input type="text" id="a-subheading" /></div>
+          </div>
+          <div class="form-group"><label>Body (one paragraph per line)</label><textarea id="a-body" rows="6"></textarea></div>
+          <div class="form-group">
+            <label>Stats</label>
+            <div id="a-stats-editor"></div>
+            <div style="margin-top:8px;display:flex;gap:8px;">
+              <button type="button" class="btn btn-secondary btn-small" onclick="addStat()">+ Add Stat</button>
+              <button type="button" class="btn btn-secondary btn-small" onclick="removeLastStat()">Remove Last</button>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary">Save About</button>
+        </form>
+      </div>
+
+      <!-- SKILLS -->
+      <div id="panel-skills" class="panel">
+        <div class="panel-header">
+          <h2>Skills</h2>
+          <button class="btn btn-primary btn-small" onclick="openSkillModal()">+ Add Category</button>
+        </div>
+        <div id="skills-list"></div>
+      </div>
+
+      <!-- EXPERIENCE -->
+      <div id="panel-experience" class="panel">
+        <div class="panel-header">
+          <h2>Experience</h2>
+          <button class="btn btn-primary btn-small" onclick="openExpModal()">+ Add Experience</button>
+        </div>
+        <div id="experience-list"></div>
+      </div>
+
+      <!-- EDUCATION -->
+      <div id="panel-education" class="panel">
+        <div class="panel-header">
+          <h2>Education</h2>
+          <button class="btn btn-primary btn-small" onclick="openEduModal()">+ Add Education</button>
+        </div>
+        <div id="education-list"></div>
+      </div>
+
+      <!-- SERVICES -->
+      <div id="panel-services" class="panel">
+        <div class="panel-header">
+          <h2>Services</h2>
+          <button class="btn btn-primary btn-small" onclick="openSvcModal()">+ Add Service</button>
+        </div>
+        <div id="services-list"></div>
+      </div>
+
+      <!-- PROJECTS -->
+      <div id="panel-projects" class="panel">
+        <div class="panel-header">
+          <h2>Projects</h2>
+          <button class="btn btn-primary btn-small" onclick="openProjModal()">+ Add Project</button>
+        </div>
+        <div id="projects-list"></div>
+      </div>
+
+      <!-- TESTIMONIALS -->
+      <div id="panel-testimonials" class="panel">
+        <div class="panel-header">
+          <h2>Testimonials</h2>
+          <button class="btn btn-primary btn-small" onclick="openTestModal()">+ Add Testimonial</button>
+        </div>
+        <div id="testimonials-list"></div>
+      </div>
+
+            <!-- BLOG -->
+      <div id="panel-blog" class="panel">
+        <div class="panel-header">
+          <h2>Blog Posts</h2>
+          <button class="btn btn-primary btn-small" onclick="openPostModal()">+ New Post</button>
+        </div>
+        <div id="posts-list"></div>
+      </div>
+
+
+      <!-- MESSAGES -->
+      <div id="panel-messages" class="panel">
+        <div class="panel-header"><h2>Contact Messages</h2></div>
+        <div id="messages-list"></div>
+      </div>
+
+      <!-- SETTINGS -->
+      <div id="panel-settings" class="panel">
+        <div class="panel-header"><h2>Site Settings</h2></div>
+        <form onsubmit="saveSettings(event)" style="max-width:720px;">
+          <div class="form-row">
+            <div class="form-group"><label>Site Title</label><input type="text" id="s-title" /></div>
+            <div class="form-group"><label>Meta Description</label><input type="text" id="s-meta" /></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>Accent Color</label><input type="text" id="s-accent" placeholder="#38bdf8" /></div>
+            <div class="form-group"><label>Accent Color 2</label><input type="text" id="s-accent2" placeholder="#7dd3fc" /></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>Resume URL</label><input type="url" id="s-resume" placeholder="https://..." /></div>
+            <div class="form-group"><label>Contact Email</label><input type="email" id="s-email" placeholder="you@example.com" /></div>
+          </div>
+          <div class="form-group"><label>Footer Text</label><input type="text" id="s-footer" /></div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>&nbsp;</label>
+              <div class="checkbox-row">
+                <input type="checkbox" id="s-available" />
+                <label for="s-available">Show "Available for work" badge</label>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Badge Text</label>
+              <input type="text" id="s-availability-text" placeholder="Available for work" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Visible Sections</label>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px;">
+              <div class="checkbox-row"><input type="checkbox" id="s-section-about" /><label for="s-section-about">About</label></div>
+              <div class="checkbox-row"><input type="checkbox" id="s-section-skills" /><label for="s-section-skills">Skills</label></div>
+              <div class="checkbox-row"><input type="checkbox" id="s-section-experience" /><label for="s-section-experience">Experience</label></div>
+              <div class="checkbox-row"><input type="checkbox" id="s-section-education" /><label for="s-section-education">Education</label></div>
+              <div class="checkbox-row"><input type="checkbox" id="s-section-services" /><label for="s-section-services">Services</label></div>
+              <div class="checkbox-row"><input type="checkbox" id="s-section-projects" /><label for="s-section-projects">Projects</label></div>
+              <div class="checkbox-row"><input type="checkbox" id="s-section-testimonials" /><label for="s-section-testimonials">Testimonials</label></div>
+              <div class="checkbox-row"><input type="checkbox" id="s-section-contact" /><label for="s-section-contact">Contact</label></div>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary">Save Settings</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- SKILL MODAL -->
+  <div class="modal-overlay" id="skill-modal">
+    <div class="modal">
+      <h3 id="skill-modal-title">Add Skill Category</h3>
+      <form onsubmit="saveSkill(event)">
+        <input type="hidden" id="skill-id" />
+        <div class="form-group"><label>Category Name</label><input type="text" id="skill-category" required placeholder="Frontend" /></div>
+        <div class="form-group"><label>Items (comma separated)</label><input type="text" id="skill-items" placeholder="HTML, CSS, JavaScript" /></div>
+        <div class="form-row">
+          <div class="form-group"><label>Sort Order</label><input type="number" id="skill-sort" value="0" /></div>
+          <div class="form-group"><label>&nbsp;</label><div class="checkbox-row"><input type="checkbox" id="skill-visible" /><label for="skill-visible">Visible</label></div></div>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" onclick="closeSkillModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- EXPERIENCE MODAL -->
+  <div class="modal-overlay" id="exp-modal">
+    <div class="modal">
+      <h3 id="exp-modal-title">Add Experience</h3>
+      <form onsubmit="saveExp(event)">
+        <input type="hidden" id="exp-id" />
+        <div class="form-group"><label>Role</label><input type="text" id="exp-role" required /></div>
+        <div class="form-row">
+          <div class="form-group"><label>Company</label><input type="text" id="exp-company" required /></div>
+          <div class="form-group"><label>Location</label><input type="text" id="exp-location" placeholder="Remote" /></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Start (YYYY-MM)</label><input type="month" id="exp-start" /></div>
+          <div class="form-group"><label>End (YYYY-MM, blank = Present)</label><input type="month" id="exp-end" /></div>
+        </div>
+        <div class="form-group"><label>Description</label><textarea id="exp-description"></textarea></div>
+        <div class="form-row">
+          <div class="form-group"><label>Sort Order</label><input type="number" id="exp-sort" value="0" /></div>
+          <div class="form-group"><label>&nbsp;</label><div class="checkbox-row"><input type="checkbox" id="exp-visible" /><label for="exp-visible">Visible</label></div></div>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" onclick="closeExpModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- EDUCATION MODAL -->
+  <div class="modal-overlay" id="edu-modal">
+    <div class="modal">
+      <h3 id="edu-modal-title">Add Education</h3>
+      <form onsubmit="saveEdu(event)">
+        <input type="hidden" id="edu-id" />
+        <div class="form-group"><label>Degree</label><input type="text" id="edu-degree" required /></div>
+        <div class="form-row">
+          <div class="form-group"><label>Institution</label><input type="text" id="edu-institution" required /></div>
+          <div class="form-group"><label>Location</label><input type="text" id="edu-location" /></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Start (YYYY-MM)</label><input type="month" id="edu-start" /></div>
+          <div class="form-group"><label>End (YYYY-MM)</label><input type="month" id="edu-end" /></div>
+        </div>
+        <div class="form-group"><label>Description</label><textarea id="edu-description"></textarea></div>
+        <div class="form-row">
+          <div class="form-group"><label>Sort Order</label><input type="number" id="edu-sort" value="0" /></div>
+          <div class="form-group"><label>&nbsp;</label><div class="checkbox-row"><input type="checkbox" id="edu-visible" /><label for="edu-visible">Visible</label></div></div>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" onclick="closeEduModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- SERVICE MODAL -->
+  <div class="modal-overlay" id="svc-modal">
+    <div class="modal">
+      <h3 id="svc-modal-title">Add Service</h3>
+      <form onsubmit="saveSvc(event)">
+        <input type="hidden" id="svc-id" />
+        <div class="form-row">
+          <div class="form-group"><label>Icon (emoji)</label><input type="text" id="svc-icon" placeholder="🚀" /></div>
+          <div class="form-group"><label>Title</label><input type="text" id="svc-title" required /></div>
+        </div>
+        <div class="form-group"><label>Description</label><textarea id="svc-description"></textarea></div>
+        <div class="form-row">
+          <div class="form-group"><label>Sort Order</label><input type="number" id="svc-sort" value="0" /></div>
+          <div class="form-group"><label>&nbsp;</label><div class="checkbox-row"><input type="checkbox" id="svc-visible" /><label for="svc-visible">Visible</label></div></div>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" onclick="closeSvcModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- PROJECT MODAL -->
+  <div class="modal-overlay" id="proj-modal">
+    <div class="modal">
+      <h3 id="proj-modal-title">Add Project</h3>
+      <form onsubmit="saveProj(event)">
+        <input type="hidden" id="proj-id" />
+        <div class="form-group"><label>Title</label><input type="text" id="proj-title" required /></div>
+        <div class="form-group"><label>Description</label><textarea id="proj-description"></textarea></div>
+        <div class="form-group"><label>Image URL</label><input type="url" id="proj-image" placeholder="https://i.imgur.com/..." /></div>
+        <div class="form-row">
+          <div class="form-group"><label>Live URL</label><input type="url" id="proj-live" /></div>
+          <div class="form-group"><label>Repo URL</label><input type="url" id="proj-repo" /></div>
+        </div>
+        <div class="form-group"><label>Tags (comma separated)</label><input type="text" id="proj-tags" placeholder="react, typescript" /></div>
+        <div class="form-row">
+          <div class="form-group"><label>Sort Order</label><input type="number" id="proj-sort" value="0" /></div>
+          <div class="form-group"><label>&nbsp;</label><div class="checkbox-row"><input type="checkbox" id="proj-visible" /><label for="proj-visible">Visible</label></div></div>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" onclick="closeProjModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- TESTIMONIAL MODAL -->
+  <div class="modal-overlay" id="test-modal">
+    <div class="modal">
+      <h3 id="test-modal-title">Add Testimonial</h3>
+      <form onsubmit="saveTest(event)">
+        <input type="hidden" id="test-id" />
+        <div class="form-group"><label>Quote</label><textarea id="test-quote" required></textarea></div>
+        <div class="form-row">
+          <div class="form-group"><label>Author</label><input type="text" id="test-author" required /></div>
+          <div class="form-group"><label>Role</label><input type="text" id="test-role" placeholder="CEO at Company" /></div>
+        </div>
+        <div class="form-group"><label>Avatar URL</label><input type="url" id="test-avatar" /></div>
+        <div class="form-row">
+          <div class="form-group"><label>Sort Order</label><input type="number" id="test-sort" value="0" /></div>
+          <div class="form-group"><label>&nbsp;</label><div class="checkbox-row"><input type="checkbox" id="test-visible" /><label for="test-visible">Visible</label></div></div>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" onclick="closeTestModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+    <!-- POST MODAL -->
+  <div class="modal-overlay" id="post-modal">
+    <div class="modal" style="max-width:700px;">
+      <h3 id="post-modal-title">New Post</h3>
+      <form onsubmit="savePost(event)">
+        <input type="hidden" id="post-id" />
+
+        <div class="form-group">
+          <label>Title</label>
+          <input type="text" id="post-title" required placeholder="My first blog post" oninput="autoSlug()" />
+        </div>
+
+        <div class="form-group">
+          <label>Slug (URL-friendly)</label>
+          <input type="text" id="post-slug" required placeholder="my-first-blog-post" />
+          <small style="color:#64748b;font-size:0.8rem;">Used in the URL: /#post-your-slug</small>
+        </div>
+
+        <div class="form-group">
+          <label>Excerpt (short summary)</label>
+          <textarea id="post-excerpt" rows="2" placeholder="A one-sentence summary shown in the post list"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Content (supports line breaks)</label>
+          <textarea id="post-content" rows="10" placeholder="Write your post here..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Cover Image URL</label>
+          <input type="url" id="post-cover" placeholder="https://i.imgur.com/..." />
+        </div>
+
+        <div class="form-group">
+          <label>Tags (comma separated)</label>
+          <input type="text" id="post-tags" placeholder="cloudflare, workers, tutorial" />
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Sort Order</label>
+            <input type="number" id="post-sort" value="0" />
+          </div>
+          <div class="form-group">
+            <label>&nbsp;</label>
+            <div class="checkbox-row">
+              <input type="checkbox" id="post-published" />
+              <label for="post-published">Publish immediately</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" onclick="closePostModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Post</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+
+  <script src="/js/api.js"></script>
+  <script src="/js/admin.js"></script>
+</body>
+</html>
